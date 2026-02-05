@@ -25,7 +25,7 @@
     <!-- Custom Styles -->
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
 </head>
-<body class="is-loading">
+<body>
     <div class="page-loader" role="status" aria-live="polite" aria-label="Loading page">
         <div class="loader-spinner" aria-hidden="true"></div>
         <div class="loader-mark">AngkorCam</div>
@@ -204,16 +204,74 @@
     <!-- Auto-hide alerts -->
     <script>
         const pageLoader = document.querySelector('.page-loader');
-        const hideLoader = () => {
-            if (!pageLoader) return;
-            pageLoader.classList.add('hidden');
-            document.body.classList.remove('is-loading');
-            setTimeout(() => pageLoader.remove(), 400);
+        const loaderDelay = 500;
+        let loaderShowTimer = null;
+        let loaderForceHideTimer = null;
+        let loaderVisible = false;
+
+        const showLoader = (immediate = false) => {
+            if (!pageLoader || loaderVisible) return;
+            if (immediate) {
+                if (loaderShowTimer) {
+                    clearTimeout(loaderShowTimer);
+                    loaderShowTimer = null;
+                }
+                loaderVisible = true;
+                pageLoader.classList.add('is-visible');
+                document.body.classList.add('is-loading');
+                return;
+            }
+            loaderShowTimer = setTimeout(() => {
+                if (loaderVisible || !pageLoader) return;
+                loaderVisible = true;
+                pageLoader.classList.add('is-visible');
+                document.body.classList.add('is-loading');
+            }, loaderDelay);
         };
 
-        window.addEventListener('load', hideLoader, { once: true });
-        // Fallback in case the load event is delayed by slow resources.
-        setTimeout(hideLoader, 4000);
+        const hideLoader = () => {
+            if (!pageLoader) return;
+            if (loaderShowTimer) {
+                clearTimeout(loaderShowTimer);
+                loaderShowTimer = null;
+            }
+            loaderVisible = false;
+            pageLoader.classList.remove('is-visible');
+            document.body.classList.remove('is-loading');
+        };
+
+        const isNavEligible = (link) => {
+            if (!link) return false;
+            if (link.hasAttribute('data-no-loader')) return false;
+            const target = link.getAttribute('target');
+            if (target && target !== '_self') return false;
+            const href = link.getAttribute('href') || '';
+            if (href.startsWith('#')) return false;
+            if (href.startsWith('javascript:')) return false;
+            if (href.startsWith('mailto:') || href.startsWith('tel:')) return false;
+            return true;
+        };
+
+        showLoader(false);
+
+        window.addEventListener('load', () => {
+            if (loaderForceHideTimer) clearTimeout(loaderForceHideTimer);
+            hideLoader();
+        }, { once: true });
+
+        loaderForceHideTimer = setTimeout(hideLoader, 4000);
+
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', () => {
+                if (isNavEligible(link)) showLoader(true);
+            });
+        });
+
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => showLoader(true));
+        });
+
+        window.addEventListener('beforeunload', () => showLoader(true));
 
         setTimeout(() => {
             const alerts = document.querySelectorAll('.alert');

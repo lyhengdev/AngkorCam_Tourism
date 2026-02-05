@@ -46,10 +46,6 @@ body {
     position: relative;
 }
 
-body.is-loading {
-    overflow: hidden;
-}
-
 body::before {
     content: '';
     position: fixed;
@@ -72,12 +68,19 @@ body::before {
     gap: 1rem;
     z-index: 2000;
     transition: opacity 0.35s ease, visibility 0.35s ease;
-}
-
-.page-loader.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+}
+
+.page-loader.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+body.is-loading {
+    overflow: hidden;
 }
 
 .loader-spinner {
