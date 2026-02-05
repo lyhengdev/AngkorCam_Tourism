@@ -118,14 +118,18 @@ class Booking {
      * Get recent bookings
      */
     public function getRecent($limit = 10) {
+        $limit = (int)$limit;
+        if ($limit < 1) {
+            $limit = 1;
+        }
+        // TiDB doesn't allow bound parameters in LIMIT.
         $sql = "SELECT b.*, t.title as tour_title, t.location 
                 FROM bookings b 
                 JOIN tours t ON b.tour_id = t.id 
                 ORDER BY b.created_at DESC 
-                LIMIT ?";
+                LIMIT " . $limit;
         
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([$limit]);
+        $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
 }

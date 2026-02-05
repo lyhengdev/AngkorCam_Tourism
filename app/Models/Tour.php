@@ -82,8 +82,13 @@ class Tour {
      * Get featured tours (for homepage)
      */
     public function getFeatured($limit = 6) {
-        $stmt = $this->db->prepare("SELECT * FROM tours WHERE status = 'active' ORDER BY created_at DESC LIMIT ?");
-        $stmt->execute([$limit]);
+        $limit = (int)$limit;
+        if ($limit < 1) {
+            $limit = 1;
+        }
+        // TiDB doesn't allow bound parameters in LIMIT.
+        $sql = "SELECT * FROM tours WHERE status = 'active' ORDER BY created_at DESC LIMIT " . $limit;
+        $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
     

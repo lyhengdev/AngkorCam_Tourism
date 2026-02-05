@@ -38,7 +38,12 @@ try {
         PDO::ATTR_EMULATE_PREPARES => false
     ];
     if (!empty(DB_SSL_CA)) {
-        $options[PDO::MYSQL_ATTR_SSL_CA] = DB_SSL_CA;
+        $sslCa = DB_SSL_CA;
+        if ($sslCa[0] !== '/' && !preg_match('~^[A-Za-z]:\\\\~', $sslCa)) {
+            $sslCa = BASE_PATH . '/' . ltrim($sslCa, '/');
+        }
+        $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCa;
+        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
     }
     $db = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
