@@ -1,0 +1,717 @@
+/**
+ * =====================================================
+ * AngkorCam Tourism - Heritage Modern UI
+ * A warm, editorial redesign inspired by Cambodia
+ * =====================================================
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --ink: #1f241f;
+    --muted: #5b615a;
+    --paper: #f7f2e8;
+    --cream: #fbf7ef;
+    --sand: #e7d6b8;
+    --clay: #c46a3c;
+    --sun: #e9c46a;
+    --forest: #0f3d2e;
+    --jade: #2a9d8f;
+    --river: #3e7c7b;
+
+    --gradient-primary: linear-gradient(135deg, #c46a3c 0%, #e9c46a 100%);
+    --gradient-hero: linear-gradient(120deg, #0f3d2e 0%, #1c5a46 40%, #c46a3c 100%);
+    --gradient-soft: linear-gradient(180deg, rgba(231, 214, 184, 0.35) 0%, rgba(251, 247, 239, 0.8) 100%);
+
+    --shadow-sm: 0 6px 16px rgba(31, 36, 31, 0.08);
+    --shadow-md: 0 12px 28px rgba(31, 36, 31, 0.12);
+    --shadow-lg: 0 22px 48px rgba(31, 36, 31, 0.16);
+
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-xl: 30px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Manrope', 'Segoe UI', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(233, 196, 106, 0.35), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(42, 157, 143, 0.18), transparent 60%),
+        linear-gradient(180deg, rgba(15, 61, 46, 0.08) 0%, rgba(15, 61, 46, 0.0) 45%);
+    z-index: -1;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+}
+
+p {
+    color: var(--muted);
+}
+
+.text-muted {
+    color: var(--muted) !important;
+}
+
+a {
+    color: var(--forest);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: var(--clay);
+}
+
+hr {
+    border-top: 1px solid rgba(31, 36, 31, 0.12);
+    opacity: 1;
+}
+
+.eyebrow {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.eyebrow.dark {
+    color: var(--forest);
+}
+
+.section {
+    padding: 90px 0;
+}
+
+.section-header {
+    margin-bottom: 3rem;
+}
+
+.section-header .lead {
+    max-width: 640px;
+}
+
+.lead {
+    color: var(--muted);
+}
+
+.page-header {
+    padding: 60px 0 20px;
+}
+
+/* =====================================================
+   Navigation
+   ===================================================== */
+.navbar {
+    background: rgba(251, 247, 239, 0.92) !important;
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(31, 36, 31, 0.08);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-brand {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--forest) !important;
+}
+
+.brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.4rem;
+    letter-spacing: 0.02em;
+}
+
+.brand-tagline {
+    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(31, 36, 31, 0.6);
+    margin-left: 2.2rem;
+}
+
+.nav-link {
+    color: var(--ink) !important;
+    font-weight: 600;
+    padding: 0.45rem 1rem !important;
+    border-radius: 999px;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    background: rgba(15, 61, 46, 0.08);
+    color: var(--forest) !important;
+}
+
+.navbar .dropdown-menu {
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+    background: var(--cream);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background: rgba(15, 61, 46, 0.08);
+    color: var(--forest);
+}
+
+.navbar-toggler {
+    border: 1px solid rgba(31, 36, 31, 0.2);
+    padding: 0.35rem 0.5rem;
+}
+
+/* =====================================================
+   Hero
+   ===================================================== */
+.hero {
+    background: var(--gradient-hero);
+    color: var(--cream);
+    padding: 120px 0 90px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(260px 260px at 15% 40%, rgba(233, 196, 106, 0.25), transparent 60%),
+        radial-gradient(320px 320px at 80% 10%, rgba(251, 247, 239, 0.12), transparent 70%);
+    opacity: 0.9;
+    pointer-events: none;
+}
+
+.hero h1 {
+    color: var(--cream);
+    font-size: clamp(2.6rem, 3.6vw, 4.2rem);
+    margin-bottom: 1.5rem;
+}
+
+.hero .lead {
+    font-size: 1.2rem;
+    color: rgba(251, 247, 239, 0.85);
+}
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.hero-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.meta-pill {
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(251, 247, 239, 0.16);
+    border: 1px solid rgba(251, 247, 239, 0.3);
+    font-size: 0.9rem;
+    color: rgba(251, 247, 239, 0.9);
+}
+
+.hero-card {
+    background: rgba(251, 247, 239, 0.96);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    z-index: 1;
+}
+
+.hero-card .badge-soft {
+    margin-bottom: 1rem;
+}
+
+.hero-card h3 {
+    margin-bottom: 0.75rem;
+}
+
+.hero-card .hero-card-meta {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+/* =====================================================
+   Cards
+   ===================================================== */
+.glass-card {
+    background: rgba(251, 247, 239, 0.98);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+    height: 100%;
+}
+
+.step-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px dashed rgba(31, 36, 31, 0.2);
+    height: 100%;
+}
+
+.step-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--clay);
+    margin-bottom: 0.8rem;
+}
+
+.stat-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 1.8rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    text-align: center;
+    height: 100%;
+}
+
+/* =====================================================
+   Tours
+   ===================================================== */
+.tour-card {
+    background: var(--cream);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tour-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.tour-card-img {
+    width: 100%;
+    height: 240px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.tour-card:hover .tour-card-img {
+    transform: scale(1.07);
+}
+
+.tour-card-body {
+    padding: 1.6rem;
+}
+
+.tour-price {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--clay);
+    line-height: 1;
+}
+
+.tour-facts {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    color: var(--muted);
+    margin-top: 1rem;
+}
+
+/* =====================================================
+   Buttons & Badges
+   ===================================================== */
+.btn-gradient {
+    background: var(--gradient-primary);
+    border: none;
+    color: var(--cream);
+    padding: 0.85rem 2rem;
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: 0 10px 20px rgba(196, 106, 60, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 26px rgba(196, 106, 60, 0.35);
+    color: var(--cream);
+}
+
+.btn-gradient.btn-sm,
+.btn-outline-gradient.btn-sm,
+.btn-soft.btn-sm {
+    padding: 0.55rem 1.3rem;
+    font-size: 0.85rem;
+}
+
+.btn-gradient.btn-lg,
+.btn-outline-gradient.btn-lg {
+    padding: 1rem 2.4rem;
+    font-size: 1rem;
+}
+
+.btn-outline-gradient {
+    background: transparent;
+    border: 2px solid rgba(251, 247, 239, 0.65);
+    color: var(--cream);
+    padding: 0.85rem 2rem;
+    border-radius: 999px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-gradient:hover {
+    background: rgba(251, 247, 239, 0.15);
+    color: var(--cream);
+}
+
+.btn-outline-dark {
+    border-radius: 999px;
+    border-color: rgba(15, 61, 46, 0.5);
+    color: var(--forest);
+}
+
+.btn-outline-dark:hover {
+    background: var(--forest);
+    color: var(--cream);
+    border-color: var(--forest);
+}
+
+.btn-soft {
+    background: rgba(15, 61, 46, 0.08);
+    color: var(--forest);
+    border-radius: 999px;
+    padding: 0.6rem 1.4rem;
+    font-weight: 600;
+}
+
+.btn-soft:hover {
+    background: rgba(15, 61, 46, 0.16);
+    color: var(--forest);
+}
+
+.badge-gradient {
+    background: rgba(15, 61, 46, 0.12);
+    color: var(--forest);
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.82rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-soft {
+    background: rgba(196, 106, 60, 0.15);
+    color: var(--clay);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+.badge-status {
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: inline-flex;
+}
+
+.badge-pending { background: rgba(233, 196, 106, 0.3); color: #7a5a1a; }
+.badge-confirmed { background: rgba(42, 157, 143, 0.2); color: #1f6158; }
+.badge-completed { background: rgba(62, 124, 123, 0.2); color: #254f4e; }
+.badge-cancelled { background: rgba(196, 106, 60, 0.2); color: #7b3b1d; }
+
+/* =====================================================
+   Forms
+   ===================================================== */
+.form-control, .form-select {
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(31, 36, 31, 0.18);
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    background: var(--cream);
+    transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--forest);
+    box-shadow: 0 0 0 4px rgba(15, 61, 46, 0.12);
+    outline: none;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* =====================================================
+   Tables
+   ===================================================== */
+.table {
+    background: var(--cream);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.table thead {
+    background: var(--forest);
+    color: var(--cream);
+}
+
+.table thead th {
+    font-weight: 600;
+    padding: 1rem;
+    border: none;
+}
+
+.table tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(31, 36, 31, 0.08);
+}
+
+.table tbody tr:hover {
+    background: rgba(15, 61, 46, 0.04);
+}
+
+/* =====================================================
+   Alerts
+   ===================================================== */
+.alert {
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    background: var(--cream);
+    color: var(--ink);
+}
+
+.alert-success {
+    background: rgba(42, 157, 143, 0.15);
+    border-color: rgba(42, 157, 143, 0.3);
+    color: #1f6158;
+}
+
+.alert-danger {
+    background: rgba(196, 106, 60, 0.15);
+    border-color: rgba(196, 106, 60, 0.3);
+    color: #7b3b1d;
+}
+
+/* =====================================================
+   Auth
+   ===================================================== */
+.auth-shell {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    background: var(--cream);
+    border: 1px solid rgba(31, 36, 31, 0.08);
+}
+
+.auth-aside {
+    background: var(--gradient-hero);
+    color: var(--cream);
+    padding: 3rem;
+}
+
+.auth-aside h3 {
+    color: var(--cream);
+}
+
+.auth-card {
+    padding: 3rem;
+}
+
+/* =====================================================
+   Booking
+   ===================================================== */
+.stepper {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.stepper .step {
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(15, 61, 46, 0.08);
+    color: var(--forest);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.stepper .step.active {
+    background: var(--forest);
+    color: var(--cream);
+}
+
+.booking-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 1.6rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+}
+
+.list-check,
+.list-cross {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.list-check li,
+.list-cross li {
+    position: relative;
+    padding-left: 1.6rem;
+    margin-bottom: 0.6rem;
+    color: var(--muted);
+}
+
+.list-check li::before {
+    content: '\\2713';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--jade);
+    font-weight: 700;
+}
+
+.list-cross li::before {
+    content: '\\2715';
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--clay);
+    font-weight: 700;
+}
+
+/* =====================================================
+   Footer
+   ===================================================== */
+.footer {
+    background: var(--forest);
+    color: var(--cream);
+    padding: 4rem 0 2rem;
+    margin-top: 5rem;
+}
+
+.footer h5, .footer h6 {
+    color: var(--cream);
+}
+
+.footer a {
+    color: rgba(251, 247, 239, 0.8);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer a:hover {
+    color: var(--sun);
+}
+
+/* =====================================================
+   Animations
+   ===================================================== */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+    animation: fadeUp 0.7s ease both;
+}
+
+/* =====================================================
+   Responsive
+   ===================================================== */
+@media (max-width: 992px) {
+    .brand-tagline {
+        display: none;
+    }
+
+    .hero {
+        padding: 90px 0 70px;
+    }
+
+    .hero-card {
+        margin-top: 1.5rem;
+    }
+
+    .auth-card, .auth-aside {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.4rem;
+    }
+
+    .section {
+        padding: 70px 0;
+    }
+}
