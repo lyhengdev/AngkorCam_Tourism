@@ -16,7 +16,8 @@ RUN printf '<Directory /var/www/html/public>\n    AllowOverride All\n    Require
 
 COPY . /var/www/html
 
-RUN chown -R www-data:www-data /var/www/html/storage
+RUN mkdir -p /var/www/html/storage/logs \
+    && chown -R www-data:www-data /var/www/html/storage
 
 COPY scripts/render-start.sh /usr/local/bin/render-start
 RUN chmod +x /usr/local/bin/render-start
