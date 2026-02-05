@@ -28,16 +28,19 @@ class Tour {
         $where = $this->buildWhere($filters, $params);
 
         $orderBy = $this->resolveSort($filters['sort'] ?? 'newest');
-        $offset = max(0, ($page - 1) * $perPage);
+        $perPage = (int)$perPage;
+        if ($perPage < 1) {
+            $perPage = 12;
+        }
+        $offset = max(0, ((int)$page - 1) * $perPage);
 
-        $sql = "SELECT * FROM tours $where ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+        // TiDB doesn't reliably support bound params in LIMIT/OFFSET.
+        $sql = "SELECT * FROM tours $where ORDER BY $orderBy LIMIT " . $perPage . " OFFSET " . $offset;
         $stmt = $this->db->prepare($sql);
 
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
-        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
 
         $stmt->execute();
         return $stmt->fetchAll();

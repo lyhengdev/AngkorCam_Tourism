@@ -287,10 +287,3 @@ INSERT INTO bookings (booking_code, tour_id, user_id, customer_name, customer_em
 ('AC-2026-001235', 3, 2, 'John Doe', 'john@example.com', '+855 98 765 432', 1, '2026-02-19', 55.00, 'pending');
 
 COMMIT;
-
-
-    DB_HOST = gateway01.ap-southeast-1.prod.aws.tidbcloud.com
-    DB_PORT = 4000
-    DB_USER = jURAATaAfqdgahg.root
-    DB_PASS = your password
-    DB_NAME = angkorcam_pro

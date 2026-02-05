@@ -4,26 +4,31 @@ $pageTitle = 'Add New Tour';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tourModel = new Tour($db);
-
-    $data = [
-        'title' => sanitize($_POST['title'] ?? ''),
-        'location' => sanitize($_POST['location'] ?? ''),
-        'category' => sanitize($_POST['category'] ?? 'Cultural'),
-        'price' => (float)($_POST['price'] ?? 0),
-        'duration' => (int)($_POST['duration'] ?? 1),
-        'description' => sanitize($_POST['description'] ?? ''),
-        'highlights' => sanitize($_POST['highlights'] ?? ''),
-        'included' => sanitize($_POST['included'] ?? ''),
-        'excluded' => sanitize($_POST['excluded'] ?? ''),
-        'image' => sanitize($_POST['image'] ?? ''),
-        'available_seats' => (int)($_POST['available_seats'] ?? 15)
-    ];
-
-    if ($tourModel->create($data)) {
-        setFlash('success', 'Tour added successfully');
-        redirect('?page=admin-tours');
+    $upload = saveUploadedImage('image_file');
+    if ($upload['error']) {
+        setFlash('error', $upload['error']);
     } else {
-        setFlash('error', 'Failed to add tour');
+        $imageUrl = sanitize($_POST['image'] ?? '');
+        $data = [
+            'title' => sanitize($_POST['title'] ?? ''),
+            'location' => sanitize($_POST['location'] ?? ''),
+            'category' => sanitize($_POST['category'] ?? 'Cultural'),
+            'price' => (float)($_POST['price'] ?? 0),
+            'duration' => (int)($_POST['duration'] ?? 1),
+            'description' => sanitize($_POST['description'] ?? ''),
+            'highlights' => sanitize($_POST['highlights'] ?? ''),
+            'included' => sanitize($_POST['included'] ?? ''),
+            'excluded' => sanitize($_POST['excluded'] ?? ''),
+            'image' => $upload['path'] ?: $imageUrl,
+            'available_seats' => (int)($_POST['available_seats'] ?? 15)
+        ];
+
+        if ($tourModel->create($data)) {
+            setFlash('success', 'Tour added successfully');
+            redirect('?page=admin-tours');
+        } else {
+            setFlash('error', 'Failed to add tour');
+        }
     }
 }
 
@@ -44,7 +49,7 @@ ob_start();
         <div class="row g-4">
             <div class="col-lg-8">
                 <div class="glass-card">
-                    <form method="POST">
+                    <form method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label class="form-label">Tour Title</label>
                             <input type="text" name="title" class="form-control" required>
@@ -90,6 +95,11 @@ ob_start();
                         <label class="form-label">Image URL</label>
                         <input type="url" name="image" class="form-control" placeholder="https://...">
                         <small class="text-muted">Paste a full image URL (Wikimedia or your own hosted image).</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Or Upload Image</label>
+                        <input type="file" name="image_file" class="form-control" accept="image/*">
+                        <small class="text-muted">JPG, PNG, WEBP, or GIF. Max 5MB.</small>
                     </div>
 
                         <div class="mb-3">

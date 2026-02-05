@@ -1,8 +1,8 @@
 FROM php:8.2-apache
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    && docker-php-ext-install pdo_mysql \
+    && apt-get install -y --no-install-recommends libcurl4-openssl-dev \
+    && docker-php-ext-install pdo_mysql curl \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,8 +16,13 @@ RUN printf '<Directory /var/www/html/public>\n    AllowOverride All\n    Require
 
 COPY . /var/www/html
 
-RUN mkdir -p /var/www/html/storage/logs \
-    && chown -R www-data:www-data /var/www/html/storage
+RUN mkdir -p /var/www/html/storage/logs /var/www/html/public/uploads/tours \
+    && chown -R www-data:www-data /var/www/html/storage /var/www/html/public/uploads
+
+RUN { \
+        echo "upload_max_filesize=10M"; \
+        echo "post_max_size=10M"; \
+    } > /usr/local/etc/php/conf.d/uploads.ini
 
 COPY scripts/render-start.sh /usr/local/bin/render-start
 RUN chmod +x /usr/local/bin/render-start

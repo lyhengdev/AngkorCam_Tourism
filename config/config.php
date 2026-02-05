@@ -206,7 +206,11 @@ function truncate($text, $length = 100) {
  */
 function tourImage($tour) {
     if (!empty($tour['image'])) {
-        return $tour['image'];
+        $image = $tour['image'];
+        if (preg_match('~^https?://~i', $image)) {
+            return $image;
+        }
+        return asset($image);
     }
 
     $slug = $tour['slug'] ?? slugify($tour['title'] ?? '');
@@ -234,6 +238,117 @@ function tourImage($tour) {
     return $images[$slug]
         ?? $categoryImages[$category]
         ?? $images['angkor-wat-sunrise-bayon'];
+}
+
+/**
+ * Save uploaded image and return ['path' => string|null, 'error' => string|null]
+ */
+function saveUploadedImage($fieldName, $subDir = 'uploads/tours', $maxSizeMb = 5) {
+    if (empty($_FILES[$fieldName]) || $_FILES[$fieldName]['error'] === UPLOAD_ERR_NO_FILE) {
+        return ['path' => null, 'error' => null];
+    }
+
+    $file = $_FILES[$fieldName];
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        return ['path' => null, 'error' => 'Image upload failed. Please try again.'];
+    }
+
+    $maxBytes = (int)$maxSizeMb * 1024 * 1024;
+    if ($file['size'] > $maxBytes) {
+        return ['path' => null, 'error' => 'Image is too large. Max size is ' . $maxSizeMb . 'MB.'];
+    }
+
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+    $mime = $finfo->file($file['tmp_name']);
+    $allowed = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+        'image/gif' => 'gif'
+    ];
+    if (!isset($allowed[$mime])) {
+        return ['path' => null, 'error' => 'Invalid image type. Use JPG, PNG, WEBP, or GIF.'];
+    }
+
+    if (!empty(getenv('CLOUDINARY_CLOUD_NAME'))) {
+        return uploadToCloudinary($file['tmp_name'], $file['name'], $mime);
+    }
+
+    $relativeDir = trim($subDir, '/');
+    $targetDir = BASE_PATH . '/public/' . $relativeDir;
+    if (!is_dir($targetDir) && !mkdir($targetDir, 0755, true)) {
+        return ['path' => null, 'error' => 'Upload directory is not writable.'];
+    }
+
+    $fileName = 'tour_' . date('Ymd_His') . '_' . bin2hex(random_bytes(4)) . '.' . $allowed[$mime];
+    $targetPath = $targetDir . '/' . $fileName;
+    if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+        return ['path' => null, 'error' => 'Failed to save the uploaded image.'];
+    }
+
+    return ['path' => $relativeDir . '/' . $fileName, 'error' => null];
+}
+
+/**
+ * Upload image to Cloudinary and return ['path' => url|null, 'error' => string|null]
+ */
+function uploadToCloudinary($tmpPath, $originalName, $mimeType) {
+    $cloudName = getenv('CLOUDINARY_CLOUD_NAME') ?: '';
+    $apiKey = getenv('CLOUDINARY_API_KEY') ?: '';
+    $apiSecret = getenv('CLOUDINARY_API_SECRET') ?: '';
+    $folder = getenv('CLOUDINARY_FOLDER') ?: '';
+
+    if ($cloudName === '' || $apiKey === '' || $apiSecret === '') {
+        return ['path' => null, 'error' => 'Cloudinary is not configured.'];
+    }
+    if (!function_exists('curl_init')) {
+        return ['path' => null, 'error' => 'PHP cURL extension is required for Cloudinary uploads.'];
+    }
+
+    $timestamp = time();
+    $params = ['timestamp' => $timestamp];
+    if ($folder !== '') {
+        $params['folder'] = $folder;
+    }
+    $signature = cloudinarySignature($params, $apiSecret);
+
+    $endpoint = 'https://api.cloudinary.com/v1_1/' . $cloudName . '/image/upload';
+    $postFields = $params;
+    $postFields['api_key'] = $apiKey;
+    $postFields['signature'] = $signature;
+    $postFields['file'] = new CURLFile($tmpPath, $mimeType, $originalName);
+
+    $ch = curl_init($endpoint);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+
+    $response = curl_exec($ch);
+    if ($response === false) {
+        $error = curl_error($ch);
+        curl_close($ch);
+        return ['path' => null, 'error' => 'Cloudinary upload failed: ' . $error];
+    }
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+    if ($status >= 300 || empty($data['secure_url'])) {
+        $message = $data['error']['message'] ?? 'Cloudinary upload failed.';
+        return ['path' => null, 'error' => $message];
+    }
+
+    return ['path' => $data['secure_url'], 'error' => null];
+}
+
+function cloudinarySignature($params, $apiSecret) {
+    ksort($params);
+    $pairs = [];
+    foreach ($params as $key => $value) {
+        $pairs[] = $key . '=' . $value;
+    }
+    return sha1(implode('&', $pairs) . $apiSecret);
 }
 
 /**
