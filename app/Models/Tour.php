@@ -206,8 +206,11 @@ class Tour {
 
         $keyword = trim($filters['q'] ?? '');
         if ($keyword !== '') {
-            $conditions[] = "(title LIKE :q OR description LIKE :q OR location LIKE :q)";
-            $params[':q'] = '%' . $keyword . '%';
+            $conditions[] = "(title LIKE :q_title OR description LIKE :q_desc OR location LIKE :q_loc)";
+            $like = '%' . $keyword . '%';
+            $params[':q_title'] = $like;
+            $params[':q_desc'] = $like;
+            $params[':q_loc'] = $like;
         }
 
         $category = trim($filters['category'] ?? '');
