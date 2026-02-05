@@ -56,7 +56,7 @@ ob_start();
                 <div class="col-md-6 col-lg-4">
                     <div class="tour-card fade-up">
                         <div style="overflow: hidden;">
-                            <img src="<?= e(tourImage($tour)) ?>" class="tour-card-img" alt="<?= e($tour['title']) ?>" loading="lazy">
+                            <img src="<?= e(tourImage($tour)) ?>" class="tour-card-img" alt="<?= e($tour['title']) ?>" loading="lazy" decoding="async">
                         </div>
                         <div class="tour-card-body">
                             <span class="badge-gradient mb-3"><i class="bi bi-geo-alt"></i> <?= e($tour['location']) ?></span>

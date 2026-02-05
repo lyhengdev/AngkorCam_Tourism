@@ -11,7 +11,7 @@ ob_start();
         <div class="row g-5">
             <div class="col-lg-8">
                 <div class="glass-card p-0 overflow-hidden mb-4">
-                    <img src="<?= e(tourImage($tour)) ?>" class="img-fluid" alt="<?= e($tour['title']) ?>">
+                    <img src="<?= e(tourImage($tour)) ?>" class="img-fluid" alt="<?= e($tour['title']) ?>" decoding="async">
                     <div class="p-4">
                         <span class="badge-gradient"><i class="bi bi-geo-alt"></i> <?= e($tour['location']) ?></span>
                         <h1 class="mt-3"><?= e($tour['title']) ?></h1>

@@ -6,6 +6,16 @@
     <meta name="description" content="Discover Cambodia with AngkorCam Tourism - handcrafted tours and cultural experiences">
     <title><?= $pageTitle ?? 'AngkorCam Tourism - Discover Cambodia' ?></title>
 
+    <!-- Font Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- CDN Preconnect -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap">
+
     <!-- Bootstrap 5.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -15,7 +25,12 @@
     <!-- Custom Styles -->
     <link href="<?= asset('css/style.css') ?>" rel="stylesheet">
 </head>
-<body>
+<body class="is-loading">
+    <div class="page-loader" role="status" aria-live="polite" aria-label="Loading page">
+        <div class="loader-spinner" aria-hidden="true"></div>
+        <div class="loader-mark">AngkorCam</div>
+        <div class="loader-text">Preparing your journey…</div>
+    </div>
 
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg">
@@ -188,6 +203,18 @@
 
     <!-- Auto-hide alerts -->
     <script>
+        const pageLoader = document.querySelector('.page-loader');
+        const hideLoader = () => {
+            if (!pageLoader) return;
+            pageLoader.classList.add('hidden');
+            document.body.classList.remove('is-loading');
+            setTimeout(() => pageLoader.remove(), 400);
+        };
+
+        window.addEventListener('load', hideLoader, { once: true });
+        // Fallback in case the load event is delayed by slow resources.
+        setTimeout(hideLoader, 4000);
+
         setTimeout(() => {
             const alerts = document.querySelectorAll('.alert');
             alerts.forEach(alert => {

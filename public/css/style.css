@@ -5,8 +5,6 @@
  * =====================================================
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap');
-
 :root {
     --ink: #1f241f;
     --muted: #5b615a;
@@ -48,6 +46,10 @@ body {
     position: relative;
 }
 
+body.is-loading {
+    overflow: hidden;
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -57,6 +59,52 @@ body::before {
         radial-gradient(900px 500px at 100% 0%, rgba(42, 157, 143, 0.18), transparent 60%),
         linear-gradient(180deg, rgba(15, 61, 46, 0.08) 0%, rgba(15, 61, 46, 0.0) 45%);
     z-index: -1;
+}
+
+.page-loader {
+    position: fixed;
+    inset: 0;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 2000;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.page-loader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader-spinner {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    border: 3px solid rgba(31, 36, 31, 0.15);
+    border-top-color: var(--clay);
+    animation: loader-spin 0.9s linear infinite;
+}
+
+.loader-mark {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--forest);
+}
+
+.loader-text {
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+@keyframes loader-spin {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 img {
