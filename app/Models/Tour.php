@@ -19,6 +19,64 @@ class Tour {
         $stmt = $this->db->query("SELECT * FROM tours WHERE status = 'active' ORDER BY created_at DESC");
         return $stmt->fetchAll();
     }
+
+    /**
+     * Get filtered tours with pagination
+     */
+    public function getFiltered($filters, $page = 1, $perPage = 12) {
+        $params = [];
+        $where = $this->buildWhere($filters, $params);
+
+        $orderBy = $this->resolveSort($filters['sort'] ?? 'newest');
+        $offset = max(0, ($page - 1) * $perPage);
+
+        $sql = "SELECT * FROM tours $where ORDER BY $orderBy LIMIT :limit OFFSET :offset";
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->bindValue(':limit', (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Count filtered tours
+     */
+    public function countFiltered($filters) {
+        $params = [];
+        $where = $this->buildWhere($filters, $params);
+
+        $sql = "SELECT COUNT(*) AS total FROM tours $where";
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->execute();
+        $row = $stmt->fetch();
+        return (int)($row['total'] ?? 0);
+    }
+
+    /**
+     * Get distinct locations
+     */
+    public function getLocations() {
+        $stmt = $this->db->query("SELECT DISTINCT location FROM tours WHERE status = 'active' ORDER BY location ASC");
+        return $stmt->fetchAll();
+    }
+
+    /**
+     * Get distinct categories
+     */
+    public function getCategories() {
+        $stmt = $this->db->query("SELECT DISTINCT category FROM tours WHERE status = 'active' ORDER BY category ASC");
+        return $stmt->fetchAll();
+    }
     
     /**
      * Get featured tours (for homepage)
@@ -133,5 +191,59 @@ class Tour {
         $stmt = $this->db->prepare("SELECT * FROM tours WHERE (title LIKE ? OR description LIKE ? OR location LIKE ?) AND status = 'active'");
         $stmt->execute([$keyword, $keyword, $keyword]);
         return $stmt->fetchAll();
+    }
+
+    private function buildWhere($filters, &$params) {
+        $conditions = ["status = 'active'"];
+
+        $keyword = trim($filters['q'] ?? '');
+        if ($keyword !== '') {
+            $conditions[] = "(title LIKE :q OR description LIKE :q OR location LIKE :q)";
+            $params[':q'] = '%' . $keyword . '%';
+        }
+
+        $category = trim($filters['category'] ?? '');
+        if ($category !== '') {
+            $conditions[] = "category = :category";
+            $params[':category'] = $category;
+        }
+
+        $location = trim($filters['location'] ?? '');
+        if ($location !== '') {
+            $conditions[] = "location = :location";
+            $params[':location'] = $location;
+        }
+
+        $duration = trim($filters['duration'] ?? '');
+        if ($duration !== '' && ctype_digit($duration)) {
+            $conditions[] = "duration = :duration";
+            $params[':duration'] = (int)$duration;
+        }
+
+        $minPrice = $filters['min_price'] ?? '';
+        if ($minPrice !== '' && is_numeric($minPrice)) {
+            $conditions[] = "price >= :min_price";
+            $params[':min_price'] = (float)$minPrice;
+        }
+
+        $maxPrice = $filters['max_price'] ?? '';
+        if ($maxPrice !== '' && is_numeric($maxPrice)) {
+            $conditions[] = "price <= :max_price";
+            $params[':max_price'] = (float)$maxPrice;
+        }
+
+        return "WHERE " . implode(' AND ', $conditions);
+    }
+
+    private function resolveSort($sort) {
+        $map = [
+            'price_asc' => 'price ASC',
+            'price_desc' => 'price DESC',
+            'duration_asc' => 'duration ASC',
+            'duration_desc' => 'duration DESC',
+            'newest' => 'created_at DESC'
+        ];
+
+        return $map[$sort] ?? $map['newest'];
     }
 }

@@ -9,8 +9,8 @@ ob_start();
         <div class="row align-items-center gy-5">
             <div class="col-lg-6">
                 <p class="eyebrow">AngkorCam Journeys</p>
-                <h1>Temples at Dawn, Rivers at Dusk</h1>
-                <p class="lead">Travel deeper into Cambodia with small-group tours, local storytellers, and flexible routes designed for curious travelers.</p>
+                <h1>Angkor at Dawn, Islands by Dusk</h1>
+                <p class="lead">Explore Cambodia's temples, rivers, and islands with small-group tours led by local guides.</p>
                 <div class="hero-actions">
                     <a href="?page=tours" class="btn btn-gradient btn-lg">
                         <i class="bi bi-map"></i> Explore Tours
@@ -23,19 +23,19 @@ ob_start();
                 </div>
                 <div class="hero-meta">
                     <div class="meta-pill"><i class="bi bi-star-fill me-2"></i>4.9 guest rating</div>
-                    <div class="meta-pill"><i class="bi bi-people me-2"></i>2,300+ travelers</div>
+                    <div class="meta-pill"><i class="bi bi-geo-alt me-2"></i>50+ places to visit</div>
                     <div class="meta-pill"><i class="bi bi-shield-check me-2"></i>Secure booking</div>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="hero-card">
                     <span class="badge-soft">Trip of the week</span>
-                    <h3>Angkor Sunrise & Hidden Temples</h3>
-                    <p class="mb-3">Follow a quiet sunrise route, explore lesser-known shrines, and wrap with a riverside lunch.</p>
+                    <h3>Angkor Wat Sunrise & Bayon Faces</h3>
+                    <p class="mb-3">Start before dawn, catch the sunrise at Angkor Wat, and finish at Bayon's iconic stone faces.</p>
                     <div class="hero-card-meta">
                         <span><i class="bi bi-calendar3"></i> 1 day</span>
                         <span><i class="bi bi-geo-alt"></i> Siem Reap</span>
-                        <span><i class="bi bi-currency-dollar"></i> From $95</span>
+                        <span><i class="bi bi-currency-dollar"></i> From $48</span>
                     </div>
                     <a href="?page=tours" class="btn btn-gradient btn-sm mt-4">View itinerary</a>
                 </div>
@@ -47,9 +47,9 @@ ob_start();
 <section class="section">
     <div class="container">
         <div class="section-header">
-            <p class="eyebrow dark">Featured itineraries</p>
-            <h2>Curated journeys for every pace</h2>
-            <p class="lead">Choose a sunrise sprint, a multi-day cultural immersion, or a calm coastal reset.</p>
+            <p class="eyebrow dark">Cambodia highlights</p>
+            <h2>Curated routes across temples, rivers, and coast</h2>
+            <p class="lead">Choose sunrise temples, floating villages, or island escapes tailored to your pace.</p>
         </div>
         <div class="row g-4">
             <?php foreach ($tours as $tour): ?>

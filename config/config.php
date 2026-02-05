@@ -13,9 +13,9 @@ ini_set('display_errors', 1);
 // =====================================================
 // Database Configuration
 // =====================================================
-define('DB_HOST', 'localhost');
+define('DB_HOST', '127.0.0.1'); // use "mysql" if the PHP app runs inside Docker
 define('DB_USER', 'root');
-define('DB_PASS', 'Lyheng!@09092004');
+define('DB_PASS', '');
 define('DB_NAME', 'angkorcam_pro');
 
 // =====================================================
@@ -209,24 +209,27 @@ function tourImage($tour) {
     $category = $tour['category'] ?? '';
 
     $images = [
-        'angkor-wat-sunrise' => 'https://images.unsplash.com/photo-1762270753509-73b6c9d44ecb?auto=format&fit=crop&w=1600&q=80',
-        'phnom-penh-city' => 'https://images.unsplash.com/photo-1760341913257-5533ccb9d6de?auto=format&fit=crop&w=1600&q=80',
-        'tonle-sap-floating' => 'https://images.pexels.com/photos/32978002/pexels-photo-32978002.jpeg?auto=compress&cs=tinysrgb&w=1600',
-        'kampot-kep-escape' => 'https://images.unsplash.com/photo-1634621271670-b6e356ab885e?auto=format&fit=crop&w=1600&q=80',
-        'angkor-grand-circuit' => 'https://images.unsplash.com/photo-1759629274346-5e5f036254ef?auto=format&fit=crop&w=1600&q=80',
-        'silk-island-bike' => 'https://images.pexels.com/photos/34809450/pexels-photo-34809450.jpeg?auto=compress&cs=tinysrgb&w=1600'
+        'angkor-wat-sunrise-bayon' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Sunrise_at_Angkor_Wat_Cambodia.jpg?width=1600',
+        'ta-prohm-jungle-temple' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Ta_Prohm_(I).jpg?width=1600',
+        'preah-khan-angkor-thom' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Preah_Khan_temple_at_Angkor,_Cambodia.jpg?width=1600',
+        'tonle-sap-floating-village' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Tonl%C3%A9_Sap_Floating_Village_(6202547090).jpg?width=1600',
+        'phnom-penh-royal-palace' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Royal_Palace,_Phnom_Penh_Cambodia_1.jpg?width=1600',
+        'battambang-bamboo-train' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Bamboo_train_Battambang.jpg?width=1600',
+        'kampot-kep-coastal-escape' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Kep_Crab_Market.jpg?width=1600',
+        'koh-rong-island-escape' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Koh_Rong_-_Cambodia_(50925116073).jpg?width=1600',
+        'kratie-mekong-dolphins' => 'https://commons.wikimedia.org/wiki/Special:FilePath/Irrawaddy_Dolphin.jpg?width=1600'
     ];
 
     $categoryImages = [
-        'Cultural' => $images['angkor-wat-sunrise'],
-        'Adventure' => $images['angkor-grand-circuit'],
-        'Nature' => $images['tonle-sap-floating'],
-        'Beach' => $images['kampot-kep-escape']
+        'Cultural' => $images['angkor-wat-sunrise-bayon'],
+        'Adventure' => $images['battambang-bamboo-train'],
+        'Nature' => $images['tonle-sap-floating-village'],
+        'Beach' => $images['koh-rong-island-escape']
     ];
 
     return $images[$slug]
         ?? $categoryImages[$category]
-        ?? $images['angkor-wat-sunrise'];
+        ?? $images['angkor-wat-sunrise-bayon'];
 }
 
 /**

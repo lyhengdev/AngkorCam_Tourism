@@ -376,6 +376,64 @@ hr {
 }
 
 /* =====================================================
+   Filters & Pagination
+   ===================================================== */
+.filter-bar {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    padding: 1.8rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-bar .form-label {
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.filter-bar .form-control,
+.filter-bar .form-select {
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(31, 36, 31, 0.12);
+}
+
+.results-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    margin: 0 0 1.5rem;
+    font-weight: 600;
+}
+
+.pagination-modern {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.pagination-modern .page-link {
+    padding: 0.6rem 1.2rem;
+    border-radius: 999px;
+    background: var(--cream);
+    border: 1px solid rgba(31, 36, 31, 0.12);
+    color: var(--forest);
+    font-weight: 600;
+}
+
+.pagination-modern .page-link.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.pagination-modern .page-status {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* =====================================================
    Buttons & Badges
    ===================================================== */
 .btn-gradient {
@@ -632,7 +690,7 @@ hr {
 }
 
 .list-check li::before {
-    content: '\\2713';
+    content: '\2713';
     position: absolute;
     left: 0;
     top: 0;
@@ -641,7 +699,7 @@ hr {
 }
 
 .list-cross li::before {
-    content: '\\2715';
+    content: '\2715';
     position: absolute;
     left: 0;
     top: 0;

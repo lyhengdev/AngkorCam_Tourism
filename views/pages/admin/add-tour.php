@@ -89,7 +89,7 @@ ob_start();
                     <div class="mb-3">
                         <label class="form-label">Image URL</label>
                         <input type="url" name="image" class="form-control" placeholder="https://...">
-                        <small class="text-muted">Paste a full image URL (Unsplash/Pexels).</small>
+                        <small class="text-muted">Paste a full image URL (Wikimedia or your own hosted image).</small>
                     </div>
 
                         <div class="mb-3">
