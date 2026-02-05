@@ -3,7 +3,10 @@ $pageTitle = 'Login';
 if (isLoggedIn()) redirect('?page=dashboard');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userModel = new User($db);
-    if ($userModel->login($_POST['email'] ?? '', $_POST['password'] ?? '')) {
+    $user = $userModel->login($_POST['email'] ?? '', $_POST['password'] ?? '');
+    if ($user) {
+        $token = issueAuthToken($user);
+        setAuthCookie($token);
         setFlash('success', 'Welcome back!');
         redirect('?page=dashboard');
     } else {

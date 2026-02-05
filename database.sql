@@ -75,6 +75,7 @@ CREATE TABLE bookings (
     travelers INT NOT NULL DEFAULT 1,
     booking_date DATE NOT NULL,
     total_price DECIMAL(10,2) NOT NULL,
+    payment_method VARCHAR(20) NOT NULL DEFAULT 'cash',
     status ENUM('pending', 'confirmed', 'completed', 'cancelled') DEFAULT 'pending',
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

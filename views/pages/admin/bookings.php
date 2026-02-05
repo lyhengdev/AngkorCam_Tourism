@@ -5,12 +5,20 @@ $bookingModel = new Booking($db);
 $bookings = $bookingModel->getAll();
 
 // Handle status update
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
-    $booking_id = (int)$_POST['booking_id'];
-    $status = $_POST['status'] ?? '';
-    if ($status && $bookingModel->updateStatus($booking_id, $status)) {
-        setFlash('success', 'Booking status updated');
-        redirect('?page=admin-bookings');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['delete_booking'])) {
+        $booking_id = (int)$_POST['booking_id'];
+        if ($booking_id && $bookingModel->delete($booking_id)) {
+            setFlash('success', 'Booking deleted');
+            redirect('?page=admin-bookings');
+        }
+    } elseif (isset($_POST['update_status'])) {
+        $booking_id = (int)$_POST['booking_id'];
+        $status = $_POST['status'] ?? '';
+        if ($status && $bookingModel->updateStatus($booking_id, $status)) {
+            setFlash('success', 'Booking status updated');
+            redirect('?page=admin-bookings');
+        }
     }
 }
 
@@ -35,6 +43,7 @@ ob_start();
                             <th>Date</th>
                             <th>Travelers</th>
                             <th>Amount</th>
+                            <th>Payment</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -51,6 +60,7 @@ ob_start();
                                 <td><?= formatDate($booking['booking_date']) ?></td>
                                 <td><?= $booking['travelers'] ?></td>
                                 <td><?= formatPrice($booking['total_price']) ?></td>
+                                <td><?= ucfirst(e($booking['payment_method'] ?? 'cash')) ?></td>
                                 <td>
                                     <span class="badge-status badge-<?= $booking['status'] ?>">
                                         <?= ucfirst($booking['status']) ?>
@@ -74,6 +84,15 @@ ob_start();
                                                     </button>
                                                     <button type="submit" name="status" value="cancelled" class="btn btn-sm btn-danger w-100">
                                                         Cancel
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <form method="POST" class="px-3 pb-2" onsubmit="return confirm('Delete this booking? This cannot be undone.');">
+                                                    <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
+                                                    <button type="submit" name="delete_booking" value="1" class="btn btn-sm btn-outline-danger w-100">
+                                                        Delete
                                                     </button>
                                                 </form>
                                             </li>

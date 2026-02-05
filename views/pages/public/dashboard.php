@@ -1,8 +1,9 @@
 <?php
 requireLogin();
+$currentUser = getUser();
 $pageTitle = 'Dashboard';
 $bookingModel = new Booking($db);
-$myBookings = $bookingModel->getByUser($_SESSION['user_id']);
+$myBookings = $bookingModel->getByUser($currentUser['id'] ?? 0);
 $totalBookings = count($myBookings);
 ob_start();
 ?>
@@ -10,7 +11,7 @@ ob_start();
     <div class="container">
         <div class="section-header">
             <p class="eyebrow dark">Dashboard</p>
-            <h1>Welcome, <?= e($_SESSION['name']) ?>!</h1>
+            <h1>Welcome, <?= e($currentUser['name'] ?? 'Traveler') ?>!</h1>
             <p class="lead">Track your bookings, manage upcoming trips, and discover new routes.</p>
         </div>
         <div class="row g-4">

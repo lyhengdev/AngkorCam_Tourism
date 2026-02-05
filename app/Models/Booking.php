@@ -16,8 +16,8 @@ class Booking {
      * Create new booking
      */
     public function create($data) {
-        $sql = "INSERT INTO bookings (booking_code, tour_id, user_id, customer_name, customer_email, customer_phone, travelers, booking_date, total_price, notes) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO bookings (booking_code, tour_id, user_id, customer_name, customer_email, customer_phone, travelers, booking_date, total_price, payment_method, notes) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -30,6 +30,7 @@ class Booking {
             $data['travelers'],
             $data['booking_date'],
             $data['total_price'],
+            $data['payment_method'],
             $data['notes'] ?? ''
         ]);
     }
@@ -97,6 +98,25 @@ class Booking {
     public function updateStatus($id, $status) {
         $stmt = $this->db->prepare("UPDATE bookings SET status = ? WHERE id = ?");
         return $stmt->execute([$status, $id]);
+    }
+
+    /**
+     * Delete booking
+     */
+    public function delete($id) {
+        $stmt = $this->db->prepare("DELETE FROM bookings WHERE id = ?");
+        return $stmt->execute([$id]);
+    }
+
+    /**
+     * Cancel booking for a user
+     */
+    public function cancelByUser($bookingId, $userId) {
+        $sql = "UPDATE bookings 
+                SET status = 'cancelled' 
+                WHERE id = ? AND user_id = ? AND status IN ('pending', 'confirmed')";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$bookingId, $userId]);
     }
     
     /**

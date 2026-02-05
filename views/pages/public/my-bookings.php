@@ -1,8 +1,20 @@
 <?php
 requireLogin();
+$currentUser = getUser();
 $pageTitle = 'My Bookings';
 $bookingModel = new Booking($db);
-$bookings = $bookingModel->getByUser($_SESSION['user_id']);
+$userId = $currentUser['id'] ?? 0;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cancel_booking'])) {
+    $bookingId = (int)($_POST['booking_id'] ?? 0);
+    if ($bookingId && $bookingModel->cancelByUser($bookingId, $userId)) {
+        setFlash('success', 'Booking cancelled');
+        redirect('?page=my-bookings');
+    } else {
+        setFlash('error', 'Unable to cancel booking');
+        redirect('?page=my-bookings');
+    }
+}
+$bookings = $bookingModel->getByUser($userId);
 ob_start();
 ?>
 <section class="section">
@@ -32,11 +44,20 @@ ob_start();
                             <p class="mb-0">
                                 <span class="badge-status badge-<?= $booking['status'] ?>"><?= ucfirst($booking['status']) ?></span>
                                 <strong class="ms-3">Code:</strong> <?= e($booking['booking_code']) ?>
+                                <strong class="ms-3">Payment:</strong> <?= ucfirst(e($booking['payment_method'] ?? 'cash')) ?>
                             </p>
                         </div>
                         <div class="col-md-4 text-md-end mt-3 mt-md-0">
                             <h4 class="tour-price mb-1"><?= formatPrice($booking['total_price']) ?></h4>
                             <small class="text-muted"><?= $booking['travelers'] ?> traveler(s)</small>
+                            <?php if (in_array($booking['status'], ['pending', 'confirmed'], true)): ?>
+                                <form method="POST" class="mt-3" onsubmit="return confirm('Cancel this booking?');">
+                                    <input type="hidden" name="booking_id" value="<?= $booking['id'] ?>">
+                                    <button type="submit" name="cancel_booking" value="1" class="btn btn-outline-danger btn-sm">
+                                        Cancel Booking
+                                    </button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

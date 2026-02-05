@@ -20,15 +20,16 @@
     --gradient-primary: linear-gradient(135deg, #c46a3c 0%, #e9c46a 100%);
     --gradient-hero: linear-gradient(120deg, #0f3d2e 0%, #1c5a46 40%, #c46a3c 100%);
     --gradient-soft: linear-gradient(180deg, rgba(231, 214, 184, 0.35) 0%, rgba(251, 247, 239, 0.8) 100%);
+    --hero-image: url('https://commons.wikimedia.org/wiki/Special:FilePath/Sunrise_at_Angkor_Wat_Cambodia.jpg?width=2000');
 
     --shadow-sm: 0 6px 16px rgba(31, 36, 31, 0.08);
     --shadow-md: 0 12px 28px rgba(31, 36, 31, 0.12);
     --shadow-lg: 0 22px 48px rgba(31, 36, 31, 0.16);
 
-    --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --radius-xl: 30px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
 }
 
 * {
@@ -251,7 +252,11 @@ hr {
    Hero
    ===================================================== */
 .hero {
-    background: var(--gradient-hero);
+    background-image:
+        linear-gradient(120deg, rgba(15, 61, 46, 0.72) 0%, rgba(15, 61, 46, 0.35) 45%, rgba(15, 61, 46, 0.15) 100%),
+        var(--hero-image);
+    background-size: cover;
+    background-position: center top;
     color: var(--cream);
     padding: 120px 0 90px;
     position: relative;
@@ -425,6 +430,190 @@ hr {
     color: var(--muted);
     margin-top: 1rem;
 }
+
+/* =====================================================
+   Story / Guides / Testimonials
+   ===================================================== */
+.section-alt {
+    background: var(--gradient-soft);
+    position: relative;
+    overflow: hidden;
+}
+
+.section-alt::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(420px 260px at 10% 10%, rgba(15, 61, 46, 0.08), transparent 70%),
+        radial-gradient(420px 260px at 90% 80%, rgba(196, 106, 60, 0.08), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.section-alt > .container {
+    position: relative;
+    z-index: 1;
+}
+
+.story-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+}
+
+.story-copy {
+    grid-column: span 7;
+}
+
+.story-media {
+    grid-column: span 5;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.image-tile {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(31, 36, 31, 0.08);
+}
+
+.image-tile img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.highlight-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 1.8rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+    height: 100%;
+}
+
+.testimonial-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-md);
+    height: 100%;
+}
+
+.testimonial-quote {
+    font-style: italic;
+    color: var(--ink);
+    margin-bottom: 1rem;
+}
+
+.testimonial-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.guide-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 1.6rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.guide-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.guide-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--forest);
+    font-weight: 700;
+}
+
+.faq-shell {
+    border-radius: var(--radius-lg);
+    background: var(--cream);
+    padding: 1.5rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+}
+
+.accordion-item {
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    background: var(--cream);
+}
+
+.accordion-button {
+    background: var(--cream);
+    color: var(--ink);
+    font-weight: 600;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(31, 36, 31, 0.2);
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--forest);
+    background: rgba(15, 61, 46, 0.08);
+}
+
+.policy-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-card {
+    background: var(--cream);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    border: 1px solid rgba(31, 36, 31, 0.08);
+    box-shadow: var(--shadow-sm);
+}
+
+.info-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(31, 36, 31, 0.12);
+    background: rgba(251, 247, 239, 0.8);
+    color: var(--forest);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.stagger > * {
+    opacity: 0;
+    animation: fadeUp 0.7s ease both;
+}
+
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.12s; }
+.stagger > *:nth-child(3) { animation-delay: 0.19s; }
+.stagger > *:nth-child(4) { animation-delay: 0.26s; }
+.stagger > *:nth-child(5) { animation-delay: 0.33s; }
+.stagger > *:nth-child(6) { animation-delay: 0.4s; }
 
 /* =====================================================
    Filters & Pagination
@@ -813,6 +1002,11 @@ hr {
     .auth-card, .auth-aside {
         padding: 2rem;
     }
+
+    .story-copy,
+    .story-media {
+        grid-column: span 12;
+    }
 }
 
 @media (max-width: 768px) {
@@ -822,5 +1016,9 @@ hr {
 
     .section {
         padding: 70px 0;
+    }
+
+    .story-media {
+        grid-template-columns: 1fr;
     }
 }

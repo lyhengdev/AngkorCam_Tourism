@@ -2,6 +2,7 @@
 $pageTitle = 'Home - AngkorCam Tourism';
 $tourModel = new Tour($db);
 $tours = $tourModel->getFeatured(6);
+$showcaseTours = array_slice($tours, 0, 3);
 ob_start();
 ?>
 <section class="hero">
@@ -80,6 +81,33 @@ ob_start();
     </div>
 </section>
 
+<section class="section section-alt">
+    <div class="container position-relative">
+        <div class="story-grid">
+            <div class="story-copy">
+                <p class="eyebrow dark">Our story</p>
+                <h2>Journeys shaped by local storytellers</h2>
+                <p class="lead">We work with guides, historians, and community hosts to design days that feel personal, unhurried, and rooted in Cambodia's living culture.</p>
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <span class="info-pill"><i class="bi bi-people"></i> 120+ local hosts</span>
+                    <span class="info-pill"><i class="bi bi-map"></i> 50 curated routes</span>
+                    <span class="info-pill"><i class="bi bi-star-fill"></i> 4.9 average rating</span>
+                </div>
+                <div class="mt-4">
+                    <a href="?page=about" class="btn btn-gradient">Read our story</a>
+                </div>
+            </div>
+            <div class="story-media">
+                <?php foreach ($showcaseTours as $tour): ?>
+                    <div class="image-tile">
+                        <img src="<?= e(tourImage($tour)) ?>" alt="<?= e($tour['title']) ?>" loading="lazy" decoding="async">
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="section" style="background: var(--gradient-soft);">
     <div class="container">
         <div class="section-header">
@@ -148,6 +176,149 @@ ob_start();
                     <h5 class="mt-3">24/7 Support</h5>
                     <p class="text-muted">Travel with confidence knowing help is one message away.</p>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <p class="eyebrow dark">Travel guide</p>
+            <h2>Plan smarter with local insight</h2>
+            <p class="lead">From sunrise timing to street food etiquette, get the essentials before you go.</p>
+        </div>
+        <div class="row g-4 stagger">
+            <div class="col-md-4">
+                <div class="guide-card h-100">
+                    <span class="guide-tag"><i class="bi bi-sunrise"></i> Best times</span>
+                    <h4 class="mt-3">When to visit</h4>
+                    <p class="text-muted">Dry season highlights, temple sunrise windows, and crowd-light weekdays.</p>
+                    <a href="?page=travel-guide" class="btn btn-soft mt-2">View guide</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="guide-card h-100">
+                    <span class="guide-tag"><i class="bi bi-geo-alt"></i> Routes</span>
+                    <h4 class="mt-3">How to route your days</h4>
+                    <p class="text-muted">Combine Angkor, floating villages, and islands without rushing.</p>
+                    <a href="?page=travel-guide" class="btn btn-soft mt-2">See routes</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="guide-card h-100">
+                    <span class="guide-tag"><i class="bi bi-shield-check"></i> Essentials</span>
+                    <h4 class="mt-3">What to pack</h4>
+                    <p class="text-muted">Temple-ready outfits, hydration tips, and camera-friendly advice.</p>
+                    <a href="?page=travel-guide" class="btn btn-soft mt-2">Packing list</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="container position-relative">
+        <div class="section-header">
+            <p class="eyebrow dark">Guest stories</p>
+            <h2>Memories from recent travelers</h2>
+            <p class="lead">Real experiences from guests who explored Cambodia with our guides.</p>
+        </div>
+        <div class="row g-4 stagger">
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">“Our guide knew every hidden corner. Sunrise at Angkor was unforgettable.”</p>
+                    <div class="testimonial-meta">
+                        <i class="bi bi-person-circle fs-4"></i>
+                        Maya R. · New York
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">“Smooth booking, great pacing, and the food stops were perfect.”</p>
+                    <div class="testimonial-meta">
+                        <i class="bi bi-person-circle fs-4"></i>
+                        Daniel K. · Berlin
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <p class="testimonial-quote">“We felt safe and cared for. The floating village tour was a highlight.”</p>
+                    <div class="testimonial-meta">
+                        <i class="bi bi-person-circle fs-4"></i>
+                        Lina S. · Singapore
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <p class="eyebrow dark">FAQ</p>
+            <h2>Questions travelers ask most</h2>
+        </div>
+        <div class="faq-shell">
+            <div class="accordion" id="faqPreview">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                            Can I customize a tour?
+                        </button>
+                    </h2>
+                    <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqPreview">
+                        <div class="accordion-body">
+                            Yes. Share your pace and priorities, and we will tailor a route and timing to match.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                            What is the cancellation policy?
+                        </button>
+                    </h2>
+                    <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqPreview">
+                        <div class="accordion-body">
+                            Cancel within 24 hours of booking for a full refund. After that, we will help reschedule when possible.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                            Are entrance fees included?
+                        </button>
+                    </h2>
+                    <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqPreview">
+                        <div class="accordion-body">
+                            Each tour lists what is included. Many temple tickets are excluded so you can choose a pass length.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 text-end">
+                <a href="?page=faq" class="btn btn-soft">View all FAQs</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="container position-relative">
+        <div class="glass-card d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+            <div>
+                <p class="eyebrow dark">Ready to go</p>
+                <h3>Build a Cambodia itinerary that feels personal</h3>
+                <p class="text-muted mb-0">Start with a curated tour or talk to us for a custom plan.</p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="?page=tours" class="btn btn-gradient">Explore tours</a>
+                <a href="?page=about" class="btn btn-outline-gradient">Talk to us</a>
             </div>
         </div>
     </div>

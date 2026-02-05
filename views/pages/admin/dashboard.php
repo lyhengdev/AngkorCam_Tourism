@@ -80,6 +80,7 @@ ob_start();
                             <th>Tour</th>
                             <th>Date</th>
                             <th>Amount</th>
+                            <th>Payment</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -91,6 +92,7 @@ ob_start();
                                 <td><?= e($booking['tour_title']) ?></td>
                                 <td><?= formatDate($booking['booking_date']) ?></td>
                                 <td><?= formatPrice($booking['total_price']) ?></td>
+                                <td><?= ucfirst(e($booking['payment_method'] ?? 'cash')) ?></td>
                                 <td><span class="badge-status badge-<?= $booking['status'] ?>"><?= ucfirst($booking['status']) ?></span></td>
                             </tr>
                         <?php endforeach; ?>

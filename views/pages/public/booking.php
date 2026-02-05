@@ -1,5 +1,6 @@
 <?php
 requireLogin();
+$currentUser = getUser();
 $tour_id = $_GET['tour_id'] ?? 0;
 $tourModel = new Tour($db);
 $tour = $tourModel->getById($tour_id);
@@ -23,11 +24,11 @@ ob_start();
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Full Name</label>
-                                <input type="text" name="customer_name" class="form-control" value="<?= e($_SESSION['name']) ?>" required>
+                                <input type="text" name="customer_name" class="form-control" value="<?= e($currentUser['name'] ?? '') ?>" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Email</label>
-                                <input type="email" name="customer_email" class="form-control" value="<?= e($_SESSION['email']) ?>" required>
+                                <input type="email" name="customer_email" class="form-control" value="<?= e($currentUser['email'] ?? '') ?>" required>
                             </div>
                         </div>
                         <div class="row">
@@ -43,6 +44,12 @@ ob_start();
                         <div class="mb-3">
                             <label class="form-label">Number of Travelers</label>
                             <input type="number" name="travelers" class="form-control" value="1" min="1" max="<?= $tour['available_seats'] ?>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <select name="payment_method" class="form-select" required>
+                                <option value="cash" selected>Cash (Pay on arrival)</option>
+                            </select>
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Special Requests (Optional)</label>
@@ -68,6 +75,10 @@ ob_start();
                         <div class="d-flex justify-content-between mb-2">
                             <span>Duration:</span>
                             <strong><?= $tour['duration'] ?> Day(s)</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Payment:</span>
+                            <strong>Cash</strong>
                         </div>
                         <div class="d-flex justify-content-between">
                             <span>Seats:</span>

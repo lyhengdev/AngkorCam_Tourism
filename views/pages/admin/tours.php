@@ -3,6 +3,13 @@ requireAdmin();
 $pageTitle = 'Manage Tours';
 $tourModel = new Tour($db);
 $tours = $db->query("SELECT * FROM tours ORDER BY created_at DESC")->fetchAll();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tour'])) {
+    $tour_id = (int)$_POST['tour_id'];
+    if ($tour_id && $tourModel->delete($tour_id)) {
+        setFlash('success', 'Tour deleted');
+        redirect('?page=admin-tours');
+    }
+}
 ob_start();
 ?>
 <section class="section">
@@ -51,6 +58,12 @@ ob_start();
                                     <a href="?page=admin-edit-tour&id=<?= $tour['id'] ?>" class="btn btn-sm btn-gradient">
                                         <i class="bi bi-pencil"></i> Edit
                                     </a>
+                                    <form method="POST" class="d-inline" onsubmit="return confirm('Delete this tour? It will be hidden from customers.');">
+                                        <input type="hidden" name="tour_id" value="<?= $tour['id'] ?>">
+                                        <button type="submit" name="delete_tour" value="1" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

@@ -31,14 +31,11 @@ class User {
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['name'] = $user['name'];
-            $_SESSION['email'] = $user['email'];
-            $_SESSION['role'] = $user['role'];
-            return true;
+            unset($user['password']);
+            return $user;
         }
-        
-        return false;
+
+        return null;
     }
     
     /**
@@ -65,5 +62,31 @@ class User {
         $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
         $stmt->execute([$email]);
         return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Check if email exists for another user
+     */
+    public function emailExistsForOther($email, $userId) {
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM users WHERE email = ? AND id != ?");
+        $stmt->execute([$email, $userId]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    /**
+     * Update user profile
+     */
+    public function updateProfile($id, $name, $email, $phone) {
+        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ?, phone = ? WHERE id = ?");
+        return $stmt->execute([$name, $email, $phone, $id]);
+    }
+
+    /**
+     * Update user password
+     */
+    public function updatePassword($id, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $this->db->prepare("UPDATE users SET password = ? WHERE id = ?");
+        return $stmt->execute([$hashedPassword, $id]);
     }
 }

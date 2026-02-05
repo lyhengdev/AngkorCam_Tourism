@@ -20,6 +20,11 @@ $routes = [
     'tour' => 'public/tour-detail',
     'booking' => 'public/booking',
     'process-booking' => 'public/process-booking',
+    'about' => 'public/about',
+    'faq' => 'public/faq',
+    'travel-guide' => 'public/travel-guide',
+    'terms' => 'public/terms',
+    'privacy' => 'public/privacy',
     
     // Auth Pages
     'login' => 'public/login',
@@ -28,6 +33,7 @@ $routes = [
     
     // User Pages
     'dashboard' => 'public/dashboard',
+    'profile' => 'public/profile',
     'my-bookings' => 'public/my-bookings',
     
     // Admin Pages
@@ -40,7 +46,7 @@ $routes = [
 
 // Handle logout
 if ($page === 'logout') {
-    session_destroy();
+    clearAuthCookie();
     setFlash('success', 'Logged out successfully');
     redirect('?page=home');
 }

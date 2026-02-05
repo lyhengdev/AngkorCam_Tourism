@@ -26,6 +26,8 @@ define('DB_SSL_CA', getenv('DB_SSL_CA') ?: ''); // optional CA path for TLS (e.g
 define('APP_NAME', 'AngkorCam Tourism');
 define('APP_URL', 'http://localhost/angkorcam-pro');
 define('BASE_PATH', dirname(__DIR__));
+define('JWT_SECRET', getenv('JWT_SECRET') ?: 'angkorcam_secret');
+define('JWT_TTL', (int)(getenv('JWT_TTL') ?: 604800)); // 7 days
 
 // =====================================================
 // Database Connection
@@ -60,6 +62,98 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // =====================================================
+// JWT Helpers
+// =====================================================
+function base64UrlEncode($data) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+
+function base64UrlDecode($data) {
+    $remainder = strlen($data) % 4;
+    if ($remainder) {
+        $data .= str_repeat('=', 4 - $remainder);
+    }
+    return base64_decode(strtr($data, '-_', '+/'));
+}
+
+function jwtEncode($payload, $secret) {
+    $header = ['typ' => 'JWT', 'alg' => 'HS256'];
+    $segments = [
+        base64UrlEncode(json_encode($header)),
+        base64UrlEncode(json_encode($payload))
+    ];
+    $signingInput = implode('.', $segments);
+    $signature = hash_hmac('sha256', $signingInput, $secret, true);
+    $segments[] = base64UrlEncode($signature);
+    return implode('.', $segments);
+}
+
+function jwtDecode($token, $secret) {
+    if (empty($token)) return null;
+    $parts = explode('.', $token);
+    if (count($parts) !== 3) return null;
+
+    [$headerB64, $payloadB64, $signatureB64] = $parts;
+    $header = json_decode(base64UrlDecode($headerB64), true);
+    $payload = json_decode(base64UrlDecode($payloadB64), true);
+    if (!is_array($header) || !is_array($payload)) return null;
+    if (($header['alg'] ?? '') !== 'HS256') return null;
+
+    $signature = base64UrlDecode($signatureB64);
+    $expected = hash_hmac('sha256', $headerB64 . '.' . $payloadB64, $secret, true);
+    if (!hash_equals($expected, $signature)) return null;
+
+    $now = time();
+    if (isset($payload['exp']) && $now >= (int)$payload['exp']) return null;
+    if (isset($payload['nbf']) && $now < (int)$payload['nbf']) return null;
+
+    return $payload;
+}
+
+function isHttpsRequest() {
+    if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') return true;
+    return isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443;
+}
+
+function issueAuthToken($user) {
+    $now = time();
+    $payload = [
+        'sub' => (int)($user['id'] ?? 0),
+        'name' => $user['name'] ?? '',
+        'email' => $user['email'] ?? '',
+        'role' => $user['role'] ?? 'customer',
+        'iat' => $now,
+        'exp' => $now + JWT_TTL
+    ];
+    return jwtEncode($payload, JWT_SECRET);
+}
+
+function setAuthCookie($token) {
+    setcookie('auth_token', $token, [
+        'expires' => time() + JWT_TTL,
+        'path' => '/',
+        'secure' => isHttpsRequest(),
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+}
+
+function clearAuthCookie() {
+    setcookie('auth_token', '', [
+        'expires' => time() - 3600,
+        'path' => '/',
+        'secure' => isHttpsRequest(),
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+}
+
+function getAuthPayload() {
+    $token = $_COOKIE['auth_token'] ?? null;
+    return jwtDecode($token, JWT_SECRET);
+}
+
+// =====================================================
 // Core Helper Functions
 // =====================================================
 
@@ -86,27 +180,28 @@ function redirect($url) {
  * Check if user is logged in
  */
 function isLoggedIn() {
-    return isset($_SESSION['user_id']);
+    return getAuthPayload() !== null;
 }
 
 /**
  * Check if user is admin
  */
 function isAdmin() {
-    return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+    $payload = getAuthPayload();
+    return $payload && ($payload['role'] ?? '') === 'admin';
 }
 
 /**
  * Get current user
  */
 function getUser() {
-    if (!isLoggedIn()) return null;
-    
+    $payload = getAuthPayload();
+    if (!$payload) return null;
     return [
-        'id' => $_SESSION['user_id'] ?? null,
-        'name' => $_SESSION['name'] ?? null,
-        'email' => $_SESSION['email'] ?? null,
-        'role' => $_SESSION['role'] ?? null
+        'id' => $payload['sub'] ?? null,
+        'name' => $payload['name'] ?? null,
+        'email' => $payload['email'] ?? null,
+        'role' => $payload['role'] ?? null
     ];
 }
 
@@ -362,6 +457,67 @@ function logError($message) {
 }
 
 /**
+ * Send HTML email (best-effort)
+ */
+function sendEmail($to, $subject, $html, $fromName = 'AngkorCam Tourism', $fromEmail = 'no-reply@angkorcam.com') {
+    if (empty($to) || empty($subject) || empty($html)) {
+        return false;
+    }
+    if (!function_exists('mail')) {
+        logError("Mail function not available. Email to $to not sent.");
+        return false;
+    }
+
+    $headers = [];
+    $headers[] = 'MIME-Version: 1.0';
+    $headers[] = 'Content-type: text/html; charset=UTF-8';
+    $headers[] = 'From: ' . $fromName . ' <' . $fromEmail . '>';
+    $headers[] = 'Reply-To: ' . $fromEmail;
+
+    $result = @mail($to, $subject, $html, implode("\r\n", $headers));
+    if (!$result) {
+        logError("Failed to send email to $to with subject $subject.");
+    }
+    return $result;
+}
+
+/**
+ * Booking receipt email
+ */
+function sendBookingReceipt($booking, $tour) {
+    $customerName = e($booking['customer_name'] ?? '');
+    $bookingCode = e($booking['booking_code'] ?? '');
+    $bookingDate = e(formatDate($booking['booking_date'] ?? ''));
+    $travelers = e($booking['travelers'] ?? '');
+    $total = e(formatPrice($booking['total_price'] ?? 0));
+    $payment = e(ucfirst($booking['payment_method'] ?? 'cash'));
+    $tourTitle = e($tour['title'] ?? '');
+    $tourLocation = e($tour['location'] ?? '');
+
+    $html = '
+        <div style="font-family: Arial, sans-serif; color: #1f241f; line-height: 1.6;">
+            <h2 style="margin-bottom: 0;">AngkorCam Booking Confirmation</h2>
+            <p style="margin-top: 4px;">Hi ' . $customerName . ',</p>
+            <p>Thanks for booking with AngkorCam. Here are your details:</p>
+            <table style="width: 100%; border-collapse: collapse; margin: 16px 0;">
+                <tr><td style="padding: 8px 0;"><strong>Booking Code</strong></td><td style="padding: 8px 0;">' . $bookingCode . '</td></tr>
+                <tr><td style="padding: 8px 0;"><strong>Tour</strong></td><td style="padding: 8px 0;">' . $tourTitle . '</td></tr>
+                <tr><td style="padding: 8px 0;"><strong>Location</strong></td><td style="padding: 8px 0;">' . $tourLocation . '</td></tr>
+                <tr><td style="padding: 8px 0;"><strong>Date</strong></td><td style="padding: 8px 0;">' . $bookingDate . '</td></tr>
+                <tr><td style="padding: 8px 0;"><strong>Travelers</strong></td><td style="padding: 8px 0;">' . $travelers . '</td></tr>
+                <tr><td style="padding: 8px 0;"><strong>Total</strong></td><td style="padding: 8px 0;">' . $total . '</td></tr>
+                <tr><td style="padding: 8px 0;"><strong>Payment</strong></td><td style="padding: 8px 0;">' . $payment . '</td></tr>
+            </table>
+            <p>If you need to change or cancel your booking, visit your dashboard.</p>
+            <p style="margin-top: 24px;">Safe travels,<br>AngkorCam Team</p>
+        </div>
+    ';
+
+    $subject = 'Your AngkorCam booking ' . $bookingCode;
+    return sendEmail($booking['customer_email'] ?? '', $subject, $html);
+}
+
+/**
  * Require login
  */
 function requireLogin() {
@@ -369,12 +525,34 @@ function requireLogin() {
         setFlash('error', 'Please login to continue');
         redirect('?page=login');
     }
+    $payload = getAuthPayload();
+    $userId = (int)($payload['sub'] ?? 0);
+    if ($userId <= 0) {
+        clearAuthCookie();
+        setFlash('error', 'Session expired. Please login again.');
+        redirect('?page=login');
+    }
+
+    global $db;
+    $userModel = new User($db);
+    $user = $userModel->getById($userId);
+    if (!$user || ($user['status'] ?? '') !== 'active') {
+        clearAuthCookie();
+        setFlash('error', 'Session expired. Please login again.');
+        redirect('?page=login');
+    }
+
+    if (($payload['role'] ?? '') !== ($user['role'] ?? '')) {
+        $token = issueAuthToken($user);
+        setAuthCookie($token);
+    }
 }
 
 /**
  * Require admin
  */
 function requireAdmin() {
+    requireLogin();
     if (!isAdmin()) {
         setFlash('error', 'Access denied');
         redirect('?page=home');

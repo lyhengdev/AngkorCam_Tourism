@@ -1,3 +1,4 @@
+<?php $currentUser = getUser(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -55,6 +56,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="?page=tours">Tours</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="?page=about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="?page=travel-guide">Travel Guide</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="?page=faq">FAQ</a>
+                    </li>
 
                     <?php if (isLoggedIn()): ?>
                         <li class="nav-item">
@@ -73,11 +83,14 @@
 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle"></i> <?= e($_SESSION['name']) ?>
+                                <i class="bi bi-person-circle"></i> <?= e($currentUser['name'] ?? 'Account') ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li><a class="dropdown-item" href="?page=dashboard">
-                                    <i class="bi bi-grid"></i> Dashboard
+                                <i class="bi bi-grid"></i> Dashboard
+                            </a></li>
+                                <li><a class="dropdown-item" href="?page=profile">
+                                    <i class="bi bi-person-gear"></i> Profile
                                 </a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="?page=logout">
@@ -149,9 +162,9 @@
                     <h6 class="mb-3">Explore</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="?page=tours">Browse Tours</a></li>
-                        <li class="mb-2"><a href="?page=home">Stories</a></li>
-                        <li class="mb-2"><a href="?page=home">Travel Guide</a></li>
-                        <li class="mb-2"><a href="?page=home">FAQ</a></li>
+                        <li class="mb-2"><a href="?page=about">About</a></li>
+                        <li class="mb-2"><a href="?page=travel-guide">Travel Guide</a></li>
+                        <li class="mb-2"><a href="?page=faq">FAQ</a></li>
                     </ul>
                 </div>
 
@@ -191,8 +204,8 @@
                     <p class="mb-0 opacity-75">&copy; <?= date('Y') ?> AngkorCam Tourism. All rights reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
-                    <a href="#" class="me-3 opacity-75">Privacy Policy</a>
-                    <a href="#" class="opacity-75">Terms of Service</a>
+                    <a href="?page=privacy" class="me-3 opacity-75">Privacy Policy</a>
+                    <a href="?page=terms" class="opacity-75">Terms of Service</a>
                 </div>
             </div>
         </div>
@@ -260,6 +273,11 @@
         }, { once: true });
 
         loaderForceHideTimer = setTimeout(hideLoader, 4000);
+
+        window.addEventListener('pageshow', () => {
+            if (loaderForceHideTimer) clearTimeout(loaderForceHideTimer);
+            hideLoader();
+        });
 
         document.querySelectorAll('a[href]').forEach(link => {
             link.addEventListener('click', () => {
